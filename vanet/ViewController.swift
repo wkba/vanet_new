@@ -10,11 +10,15 @@ import UIKit
 import CoreLocation
 import CoreBluetooth
 
-class ViewController: UIViewController, CBPeripheralManagerDelegate {
+class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationManagerDelegate {
+
     // PheripheralManager.
     var myPheripheralManager:CBPeripheralManager!
+    // CLLocationManager
+    var locationManager:CLLocationManager!
+
     
-    
+    @IBOutlet weak var debug_label: UILabel!
     @IBOutlet weak var state_button: UIButton!
     // Flag.
     var isAdvertising: Bool!
@@ -29,9 +33,16 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
         // ボタンの生成.
         self.state_button.layer.masksToBounds = true
         self.state_button.layer.cornerRadius = 50.0
-        self.state_button.addTarget(self, action: #selector(onClickMyButton(sender:)), for: .touchDown)
+        self.state_button.addTarget(self, action: #selector(onClickStateButton(sender:)), for: .touchDown)
         
         isAdvertising = false
+        
+        //現在地の取得を開始.
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager = CLLocationManager()
+            locationManager.delegate = self
+            locationManager.startUpdatingLocation()
+        }
     }
     
     /*
@@ -44,7 +55,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
     /*
      ボタンイベントのセット.
      */
-    func onClickMyButton(sender: UIButton){
+    func onClickStateButton(sender: UIButton){
         
         if(!isAdvertising) {
             // iBeaconのUUID.
@@ -87,5 +98,31 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
         isAdvertising = true
         state_button.setTitle("STOP", for: .normal)
         state_button.backgroundColor = UIColor.red
+    }
+
+    /*
+    ユーザが位置情報の使用を許可しているか確認.
+    */
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+        case .restricted, .denied:
+            break
+        case .authorizedAlways, .authorizedWhenInUse:
+            break
+        }
+    }
+    
+    /*
+    位置情報が更新されるたびに呼ばれる.
+    */
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let newLocation = locations.last else {
+            return
+        }
+        
+        self.debug_label.text = "緯度:".appendingFormat("%.4f", newLocation.coordinate.latitude) + ", 経度:".appendingFormat("%.4f", newLocation.coordinate.longitude) + ", 速さ:".appendingFormat("%.4f", newLocation.speed) + ", 方角:".appendingFormat("%.2f", newLocation.course);
+        print(newLocation);
     }
 }

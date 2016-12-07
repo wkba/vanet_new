@@ -14,6 +14,7 @@
 		9A8918601DF7C535003F63EF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A89185E1DF7C535003F63EF /* LaunchScreen.storyboard */; };
 		9A89186B1DF7C535003F63EF /* vanetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A89186A1DF7C535003F63EF /* vanetTests.swift */; };
 		9A8918761DF7C535003F63EF /* vanetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8918751DF7C535003F63EF /* vanetUITests.swift */; };
+		9A8918871DF7D53D003F63EF /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A8918861DF7D53D003F63EF /* CoreLocation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		9A8918711DF7C535003F63EF /* vanetUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = vanetUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A8918751DF7C535003F63EF /* vanetUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = vanetUITests.swift; sourceTree = "<group>"; };
 		9A8918771DF7C535003F63EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9A8918861DF7D53D003F63EF /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A8918871DF7D53D003F63EF /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +84,7 @@
 				9A8918691DF7C535003F63EF /* vanetTests */,
 				9A8918741DF7C535003F63EF /* vanetUITests */,
 				9A8918531DF7C535003F63EF /* Products */,
+				9A8918851DF7D53D003F63EF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -123,6 +127,14 @@
 				9A8918771DF7C535003F63EF /* Info.plist */,
 			);
 			path = vanetUITests;
+			sourceTree = "<group>";
+		};
+		9A8918851DF7D53D003F63EF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9A8918861DF7D53D003F63EF /* CoreLocation.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
