@@ -73,7 +73,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         myLocationManager.desiredAccuracy = kCLLocationAccuracyBest
         
         // 取得頻度の設定.(1mごとに位置情報取得)
-        myLocationManager.distanceFilter = 1
+        myLocationManager.distanceFilter = 0.1
         
         // セキュリティ認証のステータスを取得
         let status = CLLocationManager.authorizationStatus()
@@ -111,10 +111,10 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
             let myIdentifier = "fabo2"
             
             // Major.
-            let myMajor : CLBeaconMajorValue = 1
+            let myMajor : CLBeaconMajorValue = 0
             
             // Minor.
-            let myMinor : CLBeaconMinorValue = 2
+            let myMinor : CLBeaconMinorValue = 0
             
             // BeaconRegionを定義.
             let myBeaconRegion = CLBeaconRegion(proximityUUID: myProximityUUID! as UUID, major: myMajor, minor: myMinor, identifier: myIdentifier)
@@ -156,7 +156,29 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         
         self.debug_label.text = "緯度:".appendingFormat("%.4f", newLocation.coordinate.latitude) + ", 経度:".appendingFormat("%.4f", newLocation.coordinate.longitude) + ", 速さ:".appendingFormat("%.4f", newLocation.speed) + ", 方角:".appendingFormat("%.2f", newLocation.course);
         print(newLocation);
+        
         //ここでアドバイズを再定義
+        print("アドバイズが再定義された")
+        myPheripheralManager.stopAdvertising()
+        // iBeaconのUUID.
+        let myProximityUUID = NSUUID(uuidString: "9EDFA660-204E-4066-8644-A432AE2B6EC1")
+        
+        // iBeaconのIdentifier.
+        let myIdentifier = "fabo2"
+        
+        // Major.
+        let myMajor : CLBeaconMajorValue = CLBeaconMajorValue(arc4random() % 100 + 1)
+        // Minor.
+        let myMinor : CLBeaconMinorValue = CLBeaconMinorValue(arc4random() % 100 + 1)
+        
+        // BeaconRegionを定義.
+        let myBeaconRegion = CLBeaconRegion(proximityUUID: myProximityUUID! as UUID, major: myMajor, minor: myMinor, identifier: myIdentifier)
+        
+        // Advertisingのフォーマットを作成.
+        let myBeaconPeripheralData = NSDictionary(dictionary: myBeaconRegion.peripheralData(withMeasuredPower: nil))
+        
+        // Advertisingを発信.
+        myPheripheralManager.startAdvertising(myBeaconPeripheralData as? [String : AnyObject])
     }
     
 //central
