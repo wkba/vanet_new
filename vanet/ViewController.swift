@@ -9,6 +9,7 @@
 import UIKit
 import CoreLocation
 import CoreBluetooth
+import AudioToolbox
 
 class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource {
 
@@ -311,6 +312,11 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                 let majorID = beacon.major;
                 let rssi = beacon.rssi;
                 let accuracy = beacon.accuracy;
+                if(beacon.accuracy<1.0){
+                    // バイブレーション
+                    print("バイブレーション!!")
+                    AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+                }
                 
                 //print("UUID: \(beaconUUID.UUIDString) minorID: \(minorID) majorID: \(majorID)");
                 

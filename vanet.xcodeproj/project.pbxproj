@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9A814A3E1DF7E786009FA124 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A814A3D1DF7E786009FA124 /* AudioToolbox.framework */; };
 		9A8918561DF7C535003F63EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8918551DF7C535003F63EF /* AppDelegate.swift */; };
 		9A8918581DF7C535003F63EF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8918571DF7C535003F63EF /* ViewController.swift */; };
 		9A89185B1DF7C535003F63EF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9A8918591DF7C535003F63EF /* Main.storyboard */; };
@@ -35,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9A814A3D1DF7E786009FA124 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		9A8918521DF7C535003F63EF /* vanet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = vanet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A8918551DF7C535003F63EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9A8918571DF7C535003F63EF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -56,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A814A3E1DF7E786009FA124 /* AudioToolbox.framework in Frameworks */,
 				9A8918871DF7D53D003F63EF /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -132,6 +135,7 @@
 		9A8918851DF7D53D003F63EF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9A814A3D1DF7E786009FA124 /* AudioToolbox.framework */,
 				9A8918861DF7D53D003F63EF /* CoreLocation.framework */,
 			);
 			name = Frameworks;
@@ -528,6 +532,7 @@
 				9A89187C1DF7C535003F63EF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9A89187D1DF7C535003F63EF /* Build configuration list for PBXNativeTarget "vanetTests" */ = {
 			isa = XCConfigurationList;
@@ -536,6 +541,7 @@
 				9A89187F1DF7C535003F63EF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9A8918801DF7C535003F63EF /* Build configuration list for PBXNativeTarget "vanetUITests" */ = {
 			isa = XCConfigurationList;
@@ -544,6 +550,7 @@
 				9A8918821DF7C535003F63EF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
