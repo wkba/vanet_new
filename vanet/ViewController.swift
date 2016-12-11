@@ -24,7 +24,6 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
     // Flag.
     var isAdvertising: Bool!
     
-    var myLocationManager:CLLocationManager!
     var myBeaconRegion:CLBeaconRegion!
     var beaconUuids: NSMutableArray!
     var beaconDetails: NSMutableArray!
@@ -54,27 +53,22 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         
         //現在地の取得を開始.
         if CLLocationManager.locationServicesEnabled() {
+            // ロケーションマネージャの作成.
             locationManager = CLLocationManager()
+            // デリゲートを自身に設定.
             locationManager.delegate = self
+            // 取得精度の設定.
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            // 取得頻度の設定.(1mごとに位置情報取得)
+            locationManager.distanceFilter = 1
             locationManager.startUpdatingLocation()
         }
+
         // beaconTableView.
         beaconTableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
         beaconTableView.dataSource = self
         beaconTableView.delegate = self
         beaconTableView.rowHeight = 100
-        
-        // ロケーションマネージャの作成.
-        myLocationManager = CLLocationManager()
-        
-        // デリゲートを自身に設定.
-        myLocationManager.delegate = self
-        
-        // 取得精度の設定.
-        myLocationManager.desiredAccuracy = kCLLocationAccuracyBest
-        
-        // 取得頻度の設定.(1mごとに位置情報取得)
-        myLocationManager.distanceFilter = 0.1
         
         // セキュリティ認証のステータスを取得
         let status = CLLocationManager.authorizationStatus()
@@ -84,7 +78,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         if(status == .notDetermined) {
             // [認証手順1] まだ承認が得られていない場合は、認証ダイアログを表示.
             // [認証手順2] が呼び出される
-            myLocationManager.requestAlwaysAuthorization()
+            locationManager.requestAlwaysAuthorization()
         }
         
         // 配列をリセット
@@ -146,7 +140,8 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         state_button.setTitle("STOP", for: .normal)
         state_button.backgroundColor = UIColor.red
     }
-    
+
+
     /*
     位置情報が更新されるたびに呼ばれる.
     */
@@ -155,7 +150,14 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
             return
         }
         
-        self.debug_label.text = "緯度:".appendingFormat("%.4f", newLocation.coordinate.latitude) + ", 経度:".appendingFormat("%.4f", newLocation.coordinate.longitude) + ", 速さ:".appendingFormat("%.4f", newLocation.speed) + ", 方角:".appendingFormat("%.2f", newLocation.course);
+        guard let new_speed_Location = locations.last,
+            CLLocationCoordinate2DIsValid(new_speed_Location.coordinate) else {
+                return
+        }
+        print(new_speed_Location);
+
+        
+        self.debug_label.text = "緯度:".appendingFormat("%.4f", newLocation.coordinate.latitude) + ", 経度:".appendingFormat("%.4f", newLocation.coordinate.longitude) + ", 速さ:".appendingFormat("%.4f", new_speed_Location.speed) + ", 方角:".appendingFormat("%.2f", newLocation.course);
         print(newLocation);
         
         //ここでアドバイズを再定義
@@ -210,7 +212,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
             myBeaconRegion.notifyOnExit = true
             
             // [iBeacon 手順1] iBeaconのモニタリング開始([iBeacon 手順2]がDelegateで呼び出される).
-            myLocationManager.startMonitoring(for: myBeaconRegion)
+            locationManager.startMonitoring(for: myBeaconRegion)
         }
     }
     
@@ -312,7 +314,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                 let majorID = beacon.major;
                 let rssi = beacon.rssi;
                 let accuracy = beacon.accuracy;
-                if(beacon.accuracy<1.0){
+                if(beacon.accuracy<10.0){
                     // バイブレーション
                     print("バイブレーション!!")
                     AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
