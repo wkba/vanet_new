@@ -28,6 +28,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
     var beaconUuids: NSMutableArray!
     var beaconDetails: NSMutableArray!
     @IBOutlet weak var beaconTableView: UITableView!
+    @IBOutlet weak var findLabel: UILabel!
     
     // 今回の検知対象のUUID
     let UUIDList = [
@@ -58,9 +59,10 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
             // デリゲートを自身に設定.
             locationManager.delegate = self
             // 取得精度の設定.
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            // https://developer.apple.com/reference/corelocation/cllocationmanager/1423836-desiredaccuracy
+            locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
             // 取得頻度の設定.(1mごとに位置情報取得)
-            locationManager.distanceFilter = 1
+            locationManager.distanceFilter = 0.1
             locationManager.startUpdatingLocation()
         }
 
@@ -300,6 +302,23 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         beaconUuids = NSMutableArray()
         beaconDetails = NSMutableArray()
         
+        // beaconがある場合にfindLabelの表示を変える。なければ、空白にする。
+        if(beacons.count > 0){
+            var is_valid_accuracy = false;
+            for i in 0 ..< beacons.count {
+                let accuracy = beacons[i].accuracy;
+                if (accuracy != -1){
+                    is_valid_accuracy = true;
+                }
+            }
+            if (is_valid_accuracy) {
+                self.findLabel.text = "discoveried";
+            }
+        } else {
+            self.findLabel.text = "";
+        }
+        
+        
         // 範囲内で検知されたビーコンはこのbeaconsにCLBeaconオブジェクトとして格納される
         // rangingが開始されると１秒毎に呼ばれるため、beaconがある場合のみ処理をするようにすること.
         if(beacons.count > 0){
@@ -308,15 +327,13 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
             for i in 0 ..< beacons.count {
                 
                 let beacon = beacons[i]
-                
                 let beaconUUID = beacon.proximityUUID;
                 let minorID = beacon.minor;
                 let majorID = beacon.major;
                 let rssi = beacon.rssi;
                 let accuracy = beacon.accuracy;
                 if(beacon.accuracy<10.0){
-                    // バイブレーション
-                    print("バイブレーション!!")
+                    // バイブレーション？アラート？
                     AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
                 }
                 
