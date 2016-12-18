@@ -24,6 +24,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
     // Flag.
     var isAdvertising: Bool!
     
+    @IBOutlet weak var accuracyLabel: UILabel!
     var myBeaconRegion:CLBeaconRegion!
     var beaconUuids: NSMutableArray!
     var beaconDetails: NSMutableArray!
@@ -53,45 +54,23 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
 
     var device_width : CGFloat = 0.0
     var device_height : CGFloat = 0.0
+    var ud_major = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let ud = UserDefaults.standard
+        if ud.object(forKey: "major") == nil {
+            ud_major = 3
+        }else{
+            ud_major = ud.object(forKey: "major") as! Int
+        }
+        print(ud_major)
+
+        
         device_width = productionView.bounds.size.width
         device_height = productionView.bounds.size.height
-        //let rectSize = fillRect(width: 150.0, height: 150.0)
-        //let rectView = UIImageView(image: rectSize)
-        
-        //rectView.center = productionView.center
-        
-        //productionView.addSubview(rectView)
 
-        //let radius = getRadius(width : device_width, accuracy : 50)
-        //productionView.layer.addSublayer(getLayer(width : device_width, height : device_height, radius : radius))
-        
-        
-        //let ovalShapeLayer = CAShapeLayer()
-        //ovalShapeLayer.strokeColor = UIColor.black.cgColor  // 輪郭は青色
-        //ovalShapeLayer.fillColor = UIColor.red.cgColor  // 図形の中の色は白色
-        //ovalShapeLayer.lineWidth = 1.0  // 輪郭の線の太さは1.0pt
-        
-        // 図形は円形
-        //ovalShapeLayer.path = UIBezierPath(ovalIn: CGRect(x: device_width/2 - 50, y: device_height/2 - 50, width: 100.0, height: 100.0)).cgPath
-        
-        //let transparencyShapeLayer = CAShapeLayer()
-        //transparencyShapeLayer.strokeColor = UIColor.white.cgColor  // 輪郭は青色
-        //transparencyShapeLayer.fillColor = UIColor.white.cgColor  // 図形の中の色は白色
-        //transparencyShapeLayer.lineWidth = 1.0  // 輪郭の線の太さは1.0pt
-        
-        // 図形は円形
-        //transparencyShapeLayer.path = UIBezierPath(ovalIn: CGRect(x: device_width/2 - 25, y: device_height/2 - 25, width: 50.0, height: 50.0)).cgPath
-        
-        //ovalShapeLayer.addSublayer(transparencyShapeLayer)
-        
-        // 作成したCALayerを画面に追加
-        //productionView.layer.addSublayer(ovalShapeLayer)
-        
-        
         // PeripheralManagerを定義.
         myPheripheralManager = CBPeripheralManager()
         myPheripheralManager.delegate = self
@@ -139,25 +118,40 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         beaconDetails = NSMutableArray()
     }
     
-    func fillRect(width w: CGFloat, height h: CGFloat) -> UIImage {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-        let size = CGSize(width: w, height: h)
-        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        myPheripheralManager.stopAdvertising()
+        let ud = UserDefaults.standard
+        if ud.object(forKey: "major") == nil {
+            ud_major = 3
+        }else{
+            ud_major = ud.object(forKey: "major") as! Int
+        }
+        print(ud_major)
+
+        let myProximityUUID = NSUUID(uuidString: "9EDFA660-204E-4066-8644-A432AE2B6EC1")
         
-        let context = UIGraphicsGetCurrentContext()
+        // iBeaconのIdentifier.
+        let myIdentifier = "fabo2"
         
-        let rect = CGRect(x: 0, y: 0, width: w, height: h)
-        let path = UIBezierPath(rect: rect)
-        context?.setFillColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
+        // Major.
+        let myMajor : CLBeaconMajorValue = CLBeaconMajorValue(ud_major)
         
-        path.fill()
+        // Minor.
+        let myMinor : CLBeaconMinorValue = 0
         
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
+        // BeaconRegionを定義.
+        let myBeaconRegion = CLBeaconRegion(proximityUUID: myProximityUUID! as UUID, major: myMajor, minor: myMinor, identifier: myIdentifier)
         
-        return image!
+        // Advertisingのフォーマットを作成.
+        let myBeaconPeripheralData = NSDictionary(dictionary: myBeaconRegion.peripheralData(withMeasuredPower: nil))
         
+        
+        // Advertisingを発信.
+        myPheripheralManager.startAdvertising(myBeaconPeripheralData as? [String : AnyObject])
     }
+    
     
     /*
      debugLogに書き込むだけのメソッド
@@ -186,7 +180,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
             let myIdentifier = "fabo2"
             
             // Major.
-            let myMajor : CLBeaconMajorValue = 0
+            let myMajor : CLBeaconMajorValue = CLBeaconMajorValue(ud_major)
             
             // Minor.
             let myMinor : CLBeaconMinorValue = 0
@@ -227,30 +221,6 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
     */
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 
-        //ここでアドバイズを再定義
-        print("アドバイズが再定義された")
-        addDebugLogs(log: "アドバイズが再定義された");
-        
-        myPheripheralManager.stopAdvertising()
-        // iBeaconのUUID.
-        let myProximityUUID = NSUUID(uuidString: "9EDFA660-204E-4066-8644-A432AE2B6EC1")
-        
-        // iBeaconのIdentifier.
-        let myIdentifier = "fabo2"
-        
-        // Major.
-        let myMajor : CLBeaconMajorValue = CLBeaconMajorValue(arc4random() % 100 + 1)
-        // Minor.
-        let myMinor : CLBeaconMinorValue = CLBeaconMinorValue(arc4random() % 100 + 1)
-        
-        // BeaconRegionを定義.
-        let myBeaconRegion = CLBeaconRegion(proximityUUID: myProximityUUID! as UUID, major: myMajor, minor: myMinor, identifier: myIdentifier)
-        
-        // Advertisingのフォーマットを作成.
-        let myBeaconPeripheralData = NSDictionary(dictionary: myBeaconRegion.peripheralData(withMeasuredPower: nil))
-        
-        // Advertisingを発信.
-        myPheripheralManager.startAdvertising(myBeaconPeripheralData as? [String : AnyObject])
     }
     
 //central
@@ -425,8 +395,13 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                 addDebugLogs(log: myBeaconDetails)
                 beaconDetails.add(myBeaconDetails)
                 let radius = getRadius(width : device_width, accuracy : accuracy)
+                productionView.layer.addSublayer(getClearLayer(width : device_width, height : device_height))
                 productionView.layer.addSublayer(getLayer(width : device_width, height : device_height, radius : radius))
-                
+                if(accuracy == -1){
+                    self.accuracyLabel.text = getVehicleName(major: majorID) + "が近くにいます。"
+                }else{
+                    self.accuracyLabel.text = getVehicleName(major: majorID) + "が約".appendingFormat("%.2f", accuracy) + "m"
+                }
             }
         }
         
@@ -451,6 +426,8 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
      */
     func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
         print("didExitRegion: iBeaconが圏外に喪失されました。");
+        self.accuracyLabel.text = ""
+        productionView.layer.addSublayer(getClearLayer(width : device_width, height : device_height))
         
         // 検出中のiBeaconが存在しないのなら、iBeaconのモニタリングを終了する.
         manager.stopRangingBeacons(in: region as! CLBeaconRegion)

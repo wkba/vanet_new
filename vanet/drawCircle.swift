@@ -33,7 +33,7 @@ func getRadius(width : CGFloat, accuracy : CLLocationAccuracy)->CGFloat{
 func getLayer(width : CGFloat, height : CGFloat, radius : CGFloat)->CAShapeLayer{
     
     let ovalShapeLayer = CAShapeLayer()
-    ovalShapeLayer.strokeColor = UIColor.white.cgColor
+    ovalShapeLayer.strokeColor = UIColor.red.cgColor
     ovalShapeLayer.fillColor = UIColor.red.cgColor
     ovalShapeLayer.lineWidth = 1.0
     
@@ -42,7 +42,7 @@ func getLayer(width : CGFloat, height : CGFloat, radius : CGFloat)->CAShapeLayer
     let inner_radius = radius - width/5
     if (0 < inner_radius) {
     let transparencyShapeLayer = CAShapeLayer()
-    transparencyShapeLayer.strokeColor = UIColor.white.cgColor
+    transparencyShapeLayer.strokeColor = UIColor.red.cgColor
     transparencyShapeLayer.fillColor = UIColor.white.cgColor
     transparencyShapeLayer.lineWidth = 1.0
     
@@ -52,3 +52,17 @@ func getLayer(width : CGFloat, height : CGFloat, radius : CGFloat)->CAShapeLayer
     }
     return ovalShapeLayer
 }
+
+func getClearLayer(width : CGFloat, height : CGFloat)->CAShapeLayer{
+    
+    let radius = width
+    let clearLayer = CAShapeLayer()
+    clearLayer.strokeColor = UIColor.white.cgColor
+    clearLayer.fillColor = UIColor.white.cgColor
+    clearLayer.lineWidth = 1.0
+    
+    clearLayer.path = UIBezierPath(ovalIn: CGRect(x: width/2 - radius/2, y: height/2 - radius/2, width: radius, height: radius)).cgPath
+    
+    return clearLayer
+}
+

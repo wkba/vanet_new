@@ -80,6 +80,15 @@
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u0u-Y7-CVY">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="おおよその距離を表示" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="J5V-cI-lPW">
+                                        <rect key="frame" x="18" y="480" width="284" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3oF-uZ-eKg">
@@ -111,6 +120,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="accuracyLabel" destination="J5V-cI-lPW" id="fEi-Fb-TW4"/>
                         <outlet property="beaconTableView" destination="GJ1-0c-qbQ" id="JL9-vZ-xF8"/>
                         <outlet property="debugView" destination="0qD-da-Th3" id="xLQ-ws-fVW"/>
                         <outlet property="debug_logs" destination="SZY-Rr-OQn" id="df6-XG-Y4v"/>
@@ -123,10 +133,10 @@
             </objects>
             <point key="canvasLocation" x="31.875" y="54.929577464788736"/>
         </scene>
-        <!--View Controller-->
+        <!--Config View Controller-->
         <scene sceneID="cb6-zE-wPg">
             <objects>
-                <viewController id="6u5-Id-JCJ" sceneMemberID="viewController">
+                <viewController id="6u5-Id-JCJ" customClass="configViewController" customModule="vanet" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ElV-VF-EIJ"/>
                         <viewControllerLayoutGuide type="bottom" id="oLo-7B-4ad"/>
@@ -134,12 +144,32 @@
                     <view key="view" contentMode="scaleToFill" id="BX2-YE-kqN">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LKX-xn-zD3">
+                                <rect key="frame" x="0.0" y="176" width="320" height="216"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="6u5-Id-JCJ" id="EDJ-Gu-vrt"/>
+                                    <outlet property="delegate" destination="6u5-Id-JCJ" id="ar2-Su-9lH"/>
+                                </connections>
+                            </pickerView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="移動手段は" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="05D-w4-4XU">
+                                <rect key="frame" x="45" y="147" width="231" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
+                    <connections>
+                        <outlet property="vehiclePickerView" destination="LKX-xn-zD3" id="MOM-0v-B1o"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VBL-yO-XWm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="32" y="813"/>
+            <point key="canvasLocation" x="31.875" y="812.32394366197184"/>
         </scene>
     </scenes>
 </document>
