@@ -28,7 +28,21 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
     var beaconUuids: NSMutableArray!
     var beaconDetails: NSMutableArray!
     @IBOutlet weak var beaconTableView: UITableView!
-    @IBOutlet weak var findLabel: UILabel!
+    @IBOutlet weak var debug_logs: UITextView!
+    @IBOutlet weak var debugView: UIView!
+    @IBOutlet weak var modeSwitch: UISwitch!
+    @IBAction func changeMode(_ sender: Any) {
+        if (modeSwitch.isOn) {
+            debugView.isHidden = true
+            state_button.isHidden = true
+            productionView.isHidden = false
+        }else{
+            debugView.isHidden = false
+            state_button.isHidden = false
+            productionView.isHidden = true
+        }
+    }
+    @IBOutlet weak var productionView: UIView!
     
     // 今回の検知対象のUUID
     let UUIDList = [
@@ -37,9 +51,46 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         "9EDFA660-204E-4066-8644-A432AE2B6EC3"
     ]
 
-    
+    var device_width : CGFloat = 0.0
+    var device_height : CGFloat = 0.0
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        device_width = productionView.bounds.size.width
+        device_height = productionView.bounds.size.height
+        //let rectSize = fillRect(width: 150.0, height: 150.0)
+        //let rectView = UIImageView(image: rectSize)
+        
+        //rectView.center = productionView.center
+        
+        //productionView.addSubview(rectView)
+
+        //let radius = getRadius(width : device_width, accuracy : 50)
+        //productionView.layer.addSublayer(getLayer(width : device_width, height : device_height, radius : radius))
+        
+        
+        //let ovalShapeLayer = CAShapeLayer()
+        //ovalShapeLayer.strokeColor = UIColor.black.cgColor  // 輪郭は青色
+        //ovalShapeLayer.fillColor = UIColor.red.cgColor  // 図形の中の色は白色
+        //ovalShapeLayer.lineWidth = 1.0  // 輪郭の線の太さは1.0pt
+        
+        // 図形は円形
+        //ovalShapeLayer.path = UIBezierPath(ovalIn: CGRect(x: device_width/2 - 50, y: device_height/2 - 50, width: 100.0, height: 100.0)).cgPath
+        
+        //let transparencyShapeLayer = CAShapeLayer()
+        //transparencyShapeLayer.strokeColor = UIColor.white.cgColor  // 輪郭は青色
+        //transparencyShapeLayer.fillColor = UIColor.white.cgColor  // 図形の中の色は白色
+        //transparencyShapeLayer.lineWidth = 1.0  // 輪郭の線の太さは1.0pt
+        
+        // 図形は円形
+        //transparencyShapeLayer.path = UIBezierPath(ovalIn: CGRect(x: device_width/2 - 25, y: device_height/2 - 25, width: 50.0, height: 50.0)).cgPath
+        
+        //ovalShapeLayer.addSublayer(transparencyShapeLayer)
+        
+        // 作成したCALayerを画面に追加
+        //productionView.layer.addSublayer(ovalShapeLayer)
+        
         
         // PeripheralManagerを定義.
         myPheripheralManager = CBPeripheralManager()
@@ -86,6 +137,33 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         // 配列をリセット
         beaconUuids = NSMutableArray()
         beaconDetails = NSMutableArray()
+    }
+    
+    func fillRect(width w: CGFloat, height h: CGFloat) -> UIImage {
+        
+        let size = CGSize(width: w, height: h)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        
+        let context = UIGraphicsGetCurrentContext()
+        
+        let rect = CGRect(x: 0, y: 0, width: w, height: h)
+        let path = UIBezierPath(rect: rect)
+        context?.setFillColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
+        
+        path.fill()
+        
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return image!
+        
+    }
+    
+    /*
+     debugLogに書き込むだけのメソッド
+     */
+    func addDebugLogs(log : String){
+        self.debug_logs.text = self.debug_logs.text + "\n" + log;
     }
     
     /*
@@ -148,22 +226,11 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
     位置情報が更新されるたびに呼ばれる.
     */
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let newLocation = locations.last else {
-            return
-        }
-        
-        guard let new_speed_Location = locations.last,
-            CLLocationCoordinate2DIsValid(new_speed_Location.coordinate) else {
-                return
-        }
-        print(new_speed_Location);
 
-        
-        self.debug_label.text = "緯度:".appendingFormat("%.4f", newLocation.coordinate.latitude) + ", 経度:".appendingFormat("%.4f", newLocation.coordinate.longitude) + ", 速さ:".appendingFormat("%.4f", new_speed_Location.speed) + ", 方角:".appendingFormat("%.2f", newLocation.course);
-        print(newLocation);
-        
         //ここでアドバイズを再定義
         print("アドバイズが再定義された")
+        addDebugLogs(log: "アドバイズが再定義された");
+        
         myPheripheralManager.stopAdvertising()
         // iBeaconのUUID.
         let myProximityUUID = NSUUID(uuidString: "9EDFA660-204E-4066-8644-A432AE2B6EC1")
@@ -302,22 +369,6 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         beaconUuids = NSMutableArray()
         beaconDetails = NSMutableArray()
         
-        // beaconがある場合にfindLabelの表示を変える。なければ、空白にする。
-        if(beacons.count > 0){
-            var is_valid_accuracy = false;
-            for i in 0 ..< beacons.count {
-                let accuracy = beacons[i].accuracy;
-                if (accuracy != -1){
-                    is_valid_accuracy = true;
-                }
-            }
-            if (is_valid_accuracy) {
-                self.findLabel.text = "discoveried";
-            }
-        } else {
-            self.findLabel.text = "";
-        }
-        
         
         // 範囲内で検知されたビーコンはこのbeaconsにCLBeaconオブジェクトとして格納される
         // rangingが開始されると１秒毎に呼ばれるため、beaconがある場合のみ処理をするようにすること.
@@ -356,6 +407,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                 case CLProximity.near:
                     print("Proximity: Near");
                     proximity = "Near"
+                    
                     break
                     
                 case CLProximity.immediate:
@@ -370,7 +422,10 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                 myBeaconDetails += "Minor: \(minorID) "
                 myBeaconDetails += "Accuracy:".appendingFormat("%.2f", accuracy)
                 print(myBeaconDetails)
+                addDebugLogs(log: myBeaconDetails)
                 beaconDetails.add(myBeaconDetails)
+                let radius = getRadius(width : device_width, accuracy : accuracy)
+                productionView.layer.addSublayer(getLayer(width : device_width, height : device_height, radius : radius))
                 
             }
         }
@@ -433,5 +488,4 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         return cell
     }
     
-
 }
