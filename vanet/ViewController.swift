@@ -388,28 +388,41 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                 
                 beaconUuids.add(beaconUUID.uuidString)
                 
-                var myBeaconDetails = "Major: \(majorID) "
-                myBeaconDetails += "Minor: \(minorID) "
-                myBeaconDetails += "Accuracy:".appendingFormat("%.2f", accuracy)
+                var myBeaconDetails = "Ma: \(majorID) "
+                myBeaconDetails += "Mi: \(minorID) "
+                myBeaconDetails += "Ac:".appendingFormat("%.2f", accuracy)
+                myBeaconDetails += "RSSI:\(rssi) "
                 print(myBeaconDetails)
                 addDebugLogs(log: myBeaconDetails)
                 beaconDetails.add(myBeaconDetails)
                 let radius = getRadius(width : device_width, accuracy : accuracy)
                 productionView.layer.addSublayer(getClearLayer(width : device_width, height : device_height))
                 productionView.layer.addSublayer(getLayer(width : device_width, height : device_height, radius : radius))
-                if(accuracy == -1){
-                    self.accuracyLabel.text = getVehicleName(major: majorID) + "が近くにいます。"
-                }else{
-                    self.accuracyLabel.text = getVehicleName(major: majorID) + "が約".appendingFormat("%.2f", accuracy) + "m"
-                }
+//                if(accuracy == -1){
+//                    self.accuracyLabel.text = getVehicleName(major: majorID) + "が近くにいます。"
+//                }else{
+//                    self.accuracyLabel.text = getVehicleName(major: majorID) + "が約".appendingFormat("%.2f", accuracy) + "m"
+                
+                
+//                }
+                
+                //(1)シンプルaccuracy
+                
+                //(2)
+                let ratio = rssi/(-56);
+                let distance = (0.89976)*pow(Double(ratio),7.7095) + 0.111;
+                
+                //(3)
+                let d = pow(10.0, (-56 - rssi) / 20)
+                
+                self.accuracyLabel.text = "約".appendingFormat("%.3f", accuracy) + " : ".appendingFormat("%.3f", distance) + " : " .appendingFormat("%.3f", d as CVarArg)
             }
         }
         
         // TableViewのReflesh.
         beaconTableView.reloadData()
-        
-        
     }
+    
     
     /*
      [iBeacon イベント] iBeaconを検出した際に呼ばれる.
