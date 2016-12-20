@@ -123,7 +123,24 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         beaconDetails = NSMutableArray()
         
         // MotionManagerを生成.
-        motionManager = getMotionManager(debug_logs: self.debug_logs)
+        motionManager = getMotionManager()
+        
+        // 加速度の取得を開始.
+        motionManager.startAccelerometerUpdates(to: OperationQueue.main, withHandler: {(accelerometerData, error) in
+            if let e = error {
+                print(e.localizedDescription)
+                return
+            }
+            guard let data = accelerometerData else {
+                return
+            }
+            let acceleration = getAcceleration(x:data.acceleration.x,y:data.acceleration.y,z:data.acceleration.z)
+            if (urgency_acceleration < acceleration){
+                //debug_logs.text = debug_logs.text + "\n" + (NSString(format: "%.4f", acceleration) as String) ;
+                 self.addDebugLogs(log:"急なスピード変化")
+            }
+        })
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
