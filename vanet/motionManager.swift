@@ -9,7 +9,7 @@
 import UIKit
 import CoreMotion
 
-let urgency_acceleration = 1.5
+let urgency_acceleration = 5.0
 
 func getMotionManager()->CMMotionManager{
     // MotionManagerを生成.

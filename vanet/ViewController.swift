@@ -21,8 +21,8 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
     var locationManager:CLLocationManager!
     //
     var motionManager: CMMotionManager!
-
-
+    var urgency_count:Int = 0
+    var urgency_accuracy:Int = 0
     
     @IBOutlet weak var debug_label: UILabel!
     @IBOutlet weak var state_button: UIButton!
@@ -136,8 +136,8 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
             }
             let acceleration = getAcceleration(x:data.acceleration.x,y:data.acceleration.y,z:data.acceleration.z)
             if (urgency_acceleration < acceleration){
-                //debug_logs.text = debug_logs.text + "\n" + (NSString(format: "%.4f", acceleration) as String) ;
-                 self.addDebugLogs(log:"急なスピード変化")
+                self.addDebugLogs(log:"急なスピード変化")
+                startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: 0, minor: CLBeaconMinorValue(1))
             }
         })
         
@@ -147,15 +147,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         super.viewWillAppear(animated)
         
         myPheripheralManager.stopAdvertising()
-        let ud = UserDefaults.standard
-        if ud.object(forKey: "major") == nil {
-            ud_major = 3
-        }else{
-            ud_major = ud.object(forKey: "major") as! Int
-        }
-        print(ud_major)
-
-        myPheripheralManager.startAdvertising(setPeripheralData(major:CLBeaconMajorValue(ud_major), minor:0) as? [String : AnyObject])
+        myPheripheralManager.startAdvertising(setPeripheralData(major:CLBeaconMajorValue(getMajor()), minor:0) as? [String : AnyObject])
     }
     
     
@@ -390,6 +382,9 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                     self.accuracyLabel.text = getVehicleName(major: majorID) + "が近くにいます。"
                 }else{
                     self.accuracyLabel.text = getVehicleName(major: majorID) + "が約".appendingFormat("%.2f", accuracy) + "m"
+                }
+                if(is_urgency_signal(minor: CLBeaconMinorValue(beacon.minor))){
+                    startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: Int(beacon.accuracy), minor: CLBeaconMinorValue(beacon.minor))
                 }
             }
         }

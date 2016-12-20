@@ -26,11 +26,51 @@ func setPeripheralData(major:CLBeaconMajorValue, minor:CLBeaconMinorValue)->NSDi
     return myBeaconPeripheralData
 }
 
-func getMinor(urgency_code:Int, accuracy:CLLocationAccuracy, count:Int)->Int{
-    let arrenged_urgency_code = NSString(format: "%04d", urgency_code) as String
-    let arrenged_accuracy = NSString(format: "%04d", Int(accuracy)) as String
-    let arrenged_count = NSString(format: "%04d", count) as String
+func getMinor(urgency_code:Int, accuracy:Int, count:Int)->Int16{
+    let arrenged_urgency_code = urgency_code * 1000 * 10
+    let arrenged_accuracy = accuracy * 10
+    let arrenged_count = count
     
     let arrenged_minor = arrenged_urgency_code + arrenged_accuracy + arrenged_count
-    return Int(arrenged_minor)!
+    return Int16(arrenged_minor)
+}
+
+func getMajor()->Int{
+    let ud = UserDefaults.standard
+    var ud_major = 3
+    if ud.object(forKey: "major") != nil {
+        ud_major = ud.object(forKey: "major") as! Int
+    }
+    return ud_major
+}
+
+func startAdvertisingUrgencyPeripheralData(pheripheralManager: CBPeripheralManager,accuracy:Int,minor:CLBeaconMinorValue){
+    pheripheralManager.stopAdvertising();
+    if (Int(minor) == 0){
+        let minor = CLBeaconMinorValue(getMinor(urgency_code: 1, accuracy: 0, count: 0))
+        let major = CLBeaconMajorValue(getMajor())
+        let newPeripheralData = setPeripheralData(major: major, minor:minor)
+        pheripheralManager.startAdvertising(newPeripheralData as? [String : Any])
+        print("きてない")
+    }else{
+        let urgency_code = Int(minor) / 1000
+        let arrenged_accuracy = (Int(minor) / 10) % 100
+        let arrenged_count = Int(minor) % 10
+        let minor = CLBeaconMinorValue(getMinor(urgency_code: urgency_code, accuracy: arrenged_accuracy + accuracy, count: arrenged_count+1))
+        let major = CLBeaconMajorValue(getMajor())
+        print("kita")
+        let newPeripheralData = setPeripheralData(major: major, minor:minor)
+        pheripheralManager.startAdvertising(newPeripheralData as? [String : Any])
+    }
+}
+
+func reciveAdvertisingUrgencyPeripheralData(pheripheralManager: CBPeripheralManager,accuracy:Int,minor:CLBeaconMinorValue){
+    startAdvertisingUrgencyPeripheralData(pheripheralManager: pheripheralManager, accuracy: accuracy, minor:minor)
+}
+
+func is_urgency_signal(minor:CLBeaconMinorValue)->Bool{
+    if(Int(minor)/1000 == 1){
+        return true
+    }
+    return false
 }
