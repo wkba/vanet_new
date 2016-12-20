@@ -10,6 +10,8 @@ import UIKit
 import CoreLocation
 import CoreBluetooth
 import AudioToolbox
+import CoreMotion
+
 
 class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource {
 
@@ -17,6 +19,9 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
     var myPheripheralManager:CBPeripheralManager!
     // CLLocationManager
     var locationManager:CLLocationManager!
+    //
+    var motionManager: CMMotionManager!
+
 
     
     @IBOutlet weak var debug_label: UILabel!
@@ -116,6 +121,9 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         // 配列をリセット
         beaconUuids = NSMutableArray()
         beaconDetails = NSMutableArray()
+        
+        // MotionManagerを生成.
+        motionManager = getMotionManager(debug_logs: self.debug_logs)
     }
     
     override func viewWillAppear(_ animated: Bool) {
