@@ -20,6 +20,7 @@
 		9A89186B1DF7C535003F63EF /* vanetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A89186A1DF7C535003F63EF /* vanetTests.swift */; };
 		9A8918761DF7C535003F63EF /* vanetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8918751DF7C535003F63EF /* vanetUITests.swift */; };
 		9A8918871DF7D53D003F63EF /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A8918861DF7D53D003F63EF /* CoreLocation.framework */; };
+		9AD9F0B01E08613700090C5C /* peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD9F0AF1E08613700090C5C /* peripheral.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		9A8918751DF7C535003F63EF /* vanetUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = vanetUITests.swift; sourceTree = "<group>"; };
 		9A8918771DF7C535003F63EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9A8918861DF7D53D003F63EF /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		9AD9F0AF1E08613700090C5C /* peripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = peripheral.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,7 +115,9 @@
 			isa = PBXGroup;
 			children = (
 				9A8918551DF7C535003F63EF /* AppDelegate.swift */,
+				9A0485101E071BA200204199 /* utility.swift */,
 				9A8918571DF7C535003F63EF /* ViewController.swift */,
+				9AD9F0AF1E08613700090C5C /* peripheral.swift */,
 				9A8918591DF7C535003F63EF /* Main.storyboard */,
 				9A89185C1DF7C535003F63EF /* Assets.xcassets */,
 				9A89185E1DF7C535003F63EF /* LaunchScreen.storyboard */,
@@ -121,7 +125,6 @@
 				9A0485081E06E34F00204199 /* extension.swift */,
 				9A04850C1E06FBAE00204199 /* drawCircle.swift */,
 				9A04850E1E07132400204199 /* configViewController.swift */,
-				9A0485101E071BA200204199 /* utility.swift */,
 			);
 			path = vanet;
 			sourceTree = "<group>";
@@ -295,6 +298,7 @@
 				9A8918581DF7C535003F63EF /* ViewController.swift in Sources */,
 				9A8918561DF7C535003F63EF /* AppDelegate.swift in Sources */,
 				9A04850D1E06FBAE00204199 /* drawCircle.swift in Sources */,
+				9AD9F0B01E08613700090C5C /* peripheral.swift in Sources */,
 				9A04850F1E07132400204199 /* configViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

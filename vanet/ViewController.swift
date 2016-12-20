@@ -130,26 +130,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         }
         print(ud_major)
 
-        let myProximityUUID = NSUUID(uuidString: "9EDFA660-204E-4066-8644-A432AE2B6EC1")
-        
-        // iBeaconのIdentifier.
-        let myIdentifier = "fabo2"
-        
-        // Major.
-        let myMajor : CLBeaconMajorValue = CLBeaconMajorValue(ud_major)
-        
-        // Minor.
-        let myMinor : CLBeaconMinorValue = 0
-        
-        // BeaconRegionを定義.
-        let myBeaconRegion = CLBeaconRegion(proximityUUID: myProximityUUID! as UUID, major: myMajor, minor: myMinor, identifier: myIdentifier)
-        
-        // Advertisingのフォーマットを作成.
-        let myBeaconPeripheralData = NSDictionary(dictionary: myBeaconRegion.peripheralData(withMeasuredPower: nil))
-        
-        
-        // Advertisingを発信.
-        myPheripheralManager.startAdvertising(myBeaconPeripheralData as? [String : AnyObject])
+        myPheripheralManager.startAdvertising(setPeripheralData(major:CLBeaconMajorValue(ud_major), minor:0) as? [String : AnyObject])
     }
     
     
@@ -173,27 +154,9 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
     func onClickStateButton(sender: UIButton){
         
         if(!isAdvertising) {
-            // iBeaconのUUID.
-            let myProximityUUID = NSUUID(uuidString: "9EDFA660-204E-4066-8644-A432AE2B6EC1")
-            
-            // iBeaconのIdentifier.
-            let myIdentifier = "fabo2"
-            
-            // Major.
-            let myMajor : CLBeaconMajorValue = CLBeaconMajorValue(ud_major)
-            
-            // Minor.
-            let myMinor : CLBeaconMinorValue = 0
-            
-            // BeaconRegionを定義.
-            let myBeaconRegion = CLBeaconRegion(proximityUUID: myProximityUUID! as UUID, major: myMajor, minor: myMinor, identifier: myIdentifier)
-            
-            // Advertisingのフォーマットを作成.
-            let myBeaconPeripheralData = NSDictionary(dictionary: myBeaconRegion.peripheralData(withMeasuredPower: nil))
-            
-            
+
             // Advertisingを発信.
-            myPheripheralManager.startAdvertising(myBeaconPeripheralData as? [String : AnyObject])
+            myPheripheralManager.startAdvertising(setPeripheralData(major:CLBeaconMajorValue(ud_major), minor:0) as? [String : AnyObject])
         } else {
             
             myPheripheralManager.stopAdvertising()
@@ -398,24 +361,11 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                 let radius = getRadius(width : device_width, accuracy : accuracy)
                 productionView.layer.addSublayer(getClearLayer(width : device_width, height : device_height))
                 productionView.layer.addSublayer(getLayer(width : device_width, height : device_height, radius : radius))
-//                if(accuracy == -1){
-//                    self.accuracyLabel.text = getVehicleName(major: majorID) + "が近くにいます。"
-//                }else{
-//                    self.accuracyLabel.text = getVehicleName(major: majorID) + "が約".appendingFormat("%.2f", accuracy) + "m"
-                
-                
-//                }
-                
-                //(1)シンプルaccuracy
-                
-                //(2)
-                let ratio = rssi/(-56);
-                let distance = (0.89976)*pow(Double(ratio),7.7095) + 0.111;
-                
-                //(3)
-                let d = pow(10.0, (-56 - rssi) / 20)
-                
-                self.accuracyLabel.text = "約".appendingFormat("%.3f", accuracy) + " : ".appendingFormat("%.3f", distance) + " : " .appendingFormat("%.3f", d as CVarArg)
+                if(accuracy == -1){
+                    self.accuracyLabel.text = getVehicleName(major: majorID) + "が近くにいます。"
+                }else{
+                    self.accuracyLabel.text = getVehicleName(major: majorID) + "が約".appendingFormat("%.2f", accuracy) + "m"
+                }
             }
         }
         
