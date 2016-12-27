@@ -33,6 +33,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
     var myBeaconRegion:CLBeaconRegion!
     var beaconUuids: NSMutableArray!
     var beaconDetails: NSMutableArray!
+    let debug_distortion = 100.0
     @IBOutlet weak var beaconTableView: UITableView!
     @IBOutlet weak var debug_logs: UITextView!
     @IBOutlet weak var debugView: UIView!
@@ -137,7 +138,10 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
             let acceleration = getAcceleration(x:data.acceleration.x,y:data.acceleration.y,z:data.acceleration.z)
             if (urgency_acceleration < acceleration){
                 self.addDebugLogs(log:"急なスピード変化")
-                startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: 0, minor: CLBeaconMinorValue(1))
+                self.myPheripheralManager.stopAdvertising();
+                let newMajor = getMajor()
+                let newMinor = getMinor(urgency_code: 1, accuracy: 0, count: 1)
+                startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: 0,major: CLBeaconMajorValue(newMajor), minor: CLBeaconMinorValue(newMinor))
             }
         })
         
@@ -384,7 +388,16 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                     self.accuracyLabel.text = getVehicleName(major: majorID) + "が約".appendingFormat("%.2f", accuracy) + "m"
                 }
                 if(is_urgency_signal(minor: CLBeaconMinorValue(beacon.minor))){
-                    startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: Int(beacon.accuracy), minor: CLBeaconMinorValue(beacon.minor))
+                    //startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: Int(beacon.accuracy), minor: CLBeaconMinorValue(beacon.minor))
+                    print("catch urgency signal")
+                    if(under_certain_count(beacon: beacon)){
+                        print("start urgency Ad with the code" + (Int(beacon.minor)%10000 + 1).description)
+                        startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: Int(beacon.accuracy*debug_distortion), major: CLBeaconMajorValue(beacon.major), minor: CLBeaconMinorValue(beacon.minor))
+                    }else{
+                        self.myPheripheralManager.stopAdvertising()
+                        self.myPheripheralManager.startAdvertising(setPeripheralData(major:CLBeaconMajorValue(getMajor()), minor:0) as? [String : AnyObject])
+                        print("start norma Ad")
+                    }
                 }
             }
         }

@@ -32,6 +32,8 @@ func getMinor(urgency_code:Int, accuracy:Int, count:Int)->Int16{
     let arrenged_count = count
     
     let arrenged_minor = arrenged_urgency_code + arrenged_accuracy + arrenged_count
+    print("newMinor is")
+    print(arrenged_minor)
     return Int16(arrenged_minor)
 }
 
@@ -44,33 +46,40 @@ func getMajor()->Int{
     return ud_major
 }
 
-func startAdvertisingUrgencyPeripheralData(pheripheralManager: CBPeripheralManager,accuracy:Int,minor:CLBeaconMinorValue){
-    pheripheralManager.stopAdvertising();
-    if (Int(minor) == 0){
-        let minor = CLBeaconMinorValue(getMinor(urgency_code: 1, accuracy: 0, count: 0))
-        let major = CLBeaconMajorValue(getMajor())
+func startAdvertisingUrgencyPeripheralData(pheripheralManager: CBPeripheralManager,accuracy:Int,major: CLBeaconMajorValue,minor:CLBeaconMinorValue){
+    print("!!accuracy is " + accuracy.description)
+
+    if(accuracy == -1){
+        print("accuracy == -1")
+        return
+    }
+    if (Int(minor)%10000 == 0){
         let newPeripheralData = setPeripheralData(major: major, minor:minor)
         pheripheralManager.startAdvertising(newPeripheralData as? [String : Any])
-        print("きてない")
-    }else{
-        let urgency_code = Int(minor) / 1000
-        let arrenged_accuracy = (Int(minor) / 10) % 100
+        print("一番最初の端末")
+    }else if(Int(minor)%10000 < 3){
+        let urgency_code = Int(minor) / 10000
+        let arrenged_accuracy = (Int(minor) / 100) % 100 + accuracy
         let arrenged_count = Int(minor) % 10
         let minor = CLBeaconMinorValue(getMinor(urgency_code: urgency_code, accuracy: arrenged_accuracy + accuracy, count: arrenged_count+1))
         let major = CLBeaconMajorValue(getMajor())
-        print("kita")
+        print("一番目でなく、三番目以内の端末.minor is " + minor.description + ", accuracy is " + accuracy.description)
         let newPeripheralData = setPeripheralData(major: major, minor:minor)
         pheripheralManager.startAdvertising(newPeripheralData as? [String : Any])
     }
 }
 
-func reciveAdvertisingUrgencyPeripheralData(pheripheralManager: CBPeripheralManager,accuracy:Int,minor:CLBeaconMinorValue){
-    startAdvertisingUrgencyPeripheralData(pheripheralManager: pheripheralManager, accuracy: accuracy, minor:minor)
-}
-
 func is_urgency_signal(minor:CLBeaconMinorValue)->Bool{
-    if(Int(minor)/1000 == 1){
+    if(Int(minor)/10000 == 1){
         return true
     }
+    return false
+}
+
+func under_certain_count(beacon: CLBeacon)->Bool{
+    if(Int(beacon.minor)%10000 < 4){
+        return true
+    }
+    print("緊急用のadは終了")
     return false
 }
