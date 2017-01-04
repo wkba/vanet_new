@@ -26,7 +26,7 @@ func setPeripheralData(major:CLBeaconMajorValue, minor:CLBeaconMinorValue)->NSDi
     return myBeaconPeripheralData
 }
 
-func getMinor(urgency_code:Int, accuracy:Int, count:Int)->Int16{
+func getMinor(urgency_code:Int, accuracy:Int, count:Int)->UInt16{
     let arrenged_urgency_code = urgency_code * 1000 * 10
     let arrenged_accuracy = accuracy * 10
     let arrenged_count = count
@@ -34,16 +34,19 @@ func getMinor(urgency_code:Int, accuracy:Int, count:Int)->Int16{
     let arrenged_minor = arrenged_urgency_code + arrenged_accuracy + arrenged_count
     print("newMinor is")
     print(arrenged_minor)
-    return Int16(arrenged_minor)
+    return UInt16(arrenged_minor)
 }
 
-func getMajor()->Int{
+func getMajor()->UInt16{
     let ud = UserDefaults.standard
     var ud_major = 3
     if ud.object(forKey: "major") != nil {
         ud_major = ud.object(forKey: "major") as! Int
     }
-    return ud_major
+    let arrenged_major = Int(arc4random_uniform(1000)) * 10 + ud_major
+    print("newMajor is")
+    print(arrenged_major)
+    return UInt16(arrenged_major)
 }
 
 func startAdvertisingUrgencyPeripheralData(pheripheralManager: CBPeripheralManager,accuracy:Int,major: CLBeaconMajorValue,minor:CLBeaconMinorValue){
@@ -58,7 +61,7 @@ func startAdvertisingUrgencyPeripheralData(pheripheralManager: CBPeripheralManag
         pheripheralManager.startAdvertising(newPeripheralData as? [String : Any])
         print("一番最初の端末")
     }else if(Int(minor)%10000 < 3){
-        let urgency_code = Int(minor) / 10000
+        let urgency_code = Int(minor) % 100000 / 10000
         let arrenged_accuracy = (Int(minor) / 100) % 100 + accuracy
         let arrenged_count = Int(minor) % 10
         let minor = CLBeaconMinorValue(getMinor(urgency_code: urgency_code, accuracy: arrenged_accuracy + accuracy, count: arrenged_count+1))

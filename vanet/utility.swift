@@ -9,7 +9,7 @@
 import UIKit
 
 func getVehicleName(major:NSNumber)->String{
-    switch major {
+    switch Int(major) % 10{
     case 0:
         return "自動車"
     case 1:
