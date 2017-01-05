@@ -88,6 +88,13 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="近くで急加速した車がある" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EhH-D5-Y6Y">
+                                        <rect key="frame" x="18" y="101" width="284" height="28"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
@@ -127,6 +134,7 @@
                         <outlet property="modeSwitch" destination="3oF-uZ-eKg" id="73m-Sa-KvG"/>
                         <outlet property="productionView" destination="u0u-Y7-CVY" id="Yo5-Mz-Pov"/>
                         <outlet property="state_button" destination="eBo-Rr-A7F" id="5Ru-Cb-M5c"/>
+                        <outlet property="urgencyLabel" destination="EhH-D5-Y6Y" id="epk-Sd-UNT"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

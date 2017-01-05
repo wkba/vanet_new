@@ -26,6 +26,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
     
     var random_code_list: [Int] = []
     
+    @IBOutlet weak var urgencyLabel: UILabel!
     @IBOutlet weak var debug_label: UILabel!
     @IBOutlet weak var state_button: UIButton!
     // Flag.
@@ -394,6 +395,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                 if(is_urgency_signal(minor: CLBeaconMinorValue(beacon.minor))){
                     //startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: Int(beacon.accuracy), minor: CLBeaconMinorValue(beacon.minor))
                     print("catch urgency signal")
+                    self.urgencyLabel.isHidden = false
                     if(under_certain_count(beacon: beacon) && !is_first_time_random_code(major: CLBeaconMajorValue(beacon.major), random_code_list: random_code_list)){
                         print("start urgency Ad with the code" + (Int(beacon.minor)%10000 + 1).description)
                         startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: Int(beacon.accuracy*debug_distortion), major: CLBeaconMajorValue(beacon.major), minor: CLBeaconMinorValue(beacon.minor))
@@ -402,6 +404,8 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                         self.myPheripheralManager.startAdvertising(setPeripheralData(major:CLBeaconMajorValue(getMajor()), minor:0) as? [String : AnyObject])
                         print("start norma Ad")
                     }
+                }else{
+                    self.urgencyLabel.isHidden = true
                 }
             }
         }

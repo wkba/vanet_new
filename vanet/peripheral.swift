@@ -91,10 +91,10 @@ func is_urgency_signal(minor:CLBeaconMinorValue)->Bool{
 func is_first_time_random_code(major:CLBeaconMajorValue,random_code_list:Array<Int>)->Bool{
     let random_code = Int(major)/10
     if random_code_list.index(of: random_code) != nil {
-        print("これは初めて！！！")
+        print("このランダムコード初めて！！！")
         return true
     }
-    print("これは初めてじゃない")
+    print("このランダムコードは初めてじゃない")
     return false
 }
 
