@@ -24,6 +24,8 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
     var urgency_count:Int = 0
     var urgency_accuracy:Int = 0
     
+    var random_code_list: [Int] = []
+    
     @IBOutlet weak var debug_label: UILabel!
     @IBOutlet weak var state_button: UIButton!
     // Flag.
@@ -139,7 +141,9 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
             if (urgency_acceleration < acceleration){
                 self.addDebugLogs(log:"急なスピード変化")
                 self.myPheripheralManager.stopAdvertising();
-                let newMajor = getMajor()
+                let newMajor = getMajorWithRandomCode()
+                print("getMajorWithRandomCode() is " + String(newMajor))
+                self.random_code_list.append(Int(newMajor)/10)
                 let newMinor = getMinor(urgency_code: 1, accuracy: 0, count: 1)
                 startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: 0,major: CLBeaconMajorValue(newMajor), minor: CLBeaconMinorValue(newMinor))
             }
@@ -390,7 +394,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                 if(is_urgency_signal(minor: CLBeaconMinorValue(beacon.minor))){
                     //startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: Int(beacon.accuracy), minor: CLBeaconMinorValue(beacon.minor))
                     print("catch urgency signal")
-                    if(under_certain_count(beacon: beacon)){
+                    if(under_certain_count(beacon: beacon) && !is_first_time_random_code(major: CLBeaconMajorValue(beacon.major), random_code_list: random_code_list)){
                         print("start urgency Ad with the code" + (Int(beacon.minor)%10000 + 1).description)
                         startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: Int(beacon.accuracy*debug_distortion), major: CLBeaconMajorValue(beacon.major), minor: CLBeaconMinorValue(beacon.minor))
                     }else{

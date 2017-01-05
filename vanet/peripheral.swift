@@ -43,14 +43,24 @@ func getMajor()->UInt16{
     if ud.object(forKey: "major") != nil {
         ud_major = ud.object(forKey: "major") as! Int
     }
-    let arrenged_major = Int(arc4random_uniform(1000)) * 10 + ud_major
     print("newMajor is")
+    print(ud_major)
+    return UInt16(ud_major)
+}
+
+func getMajorWithRandomCode()->UInt16{
+    let ud = UserDefaults.standard
+    var ud_major = 3
+    if ud.object(forKey: "major") != nil {
+        ud_major = ud.object(forKey: "major") as! Int
+    }
+    let arrenged_major = Int(arc4random_uniform(1000)) * 10 + ud_major
+    print("getMajorWithRandomCode is")
     print(arrenged_major)
     return UInt16(arrenged_major)
 }
 
 func startAdvertisingUrgencyPeripheralData(pheripheralManager: CBPeripheralManager,accuracy:Int,major: CLBeaconMajorValue,minor:CLBeaconMinorValue){
-    print("!!accuracy is " + accuracy.description)
 
     if(accuracy == -1){
         print("accuracy == -1")
@@ -60,13 +70,12 @@ func startAdvertisingUrgencyPeripheralData(pheripheralManager: CBPeripheralManag
         let newPeripheralData = setPeripheralData(major: major, minor:minor)
         pheripheralManager.startAdvertising(newPeripheralData as? [String : Any])
         print("一番最初の端末")
-    }else if(Int(minor)%10000 < 3){
+    }else if(Int(minor)%10000 < 4){
         let urgency_code = Int(minor) % 100000 / 10000
         let arrenged_accuracy = (Int(minor) / 100) % 100 + accuracy
         let arrenged_count = Int(minor) % 10
         let minor = CLBeaconMinorValue(getMinor(urgency_code: urgency_code, accuracy: arrenged_accuracy + accuracy, count: arrenged_count+1))
-        let major = CLBeaconMajorValue(getMajor())
-        print("一番目でなく、三番目以内の端末.minor is " + minor.description + ", accuracy is " + accuracy.description)
+        print("一番目でなく、三番目以内の端末.minor is " + minor.description + ", accuracy is " + accuracy.description +  ", major is " + major.description)
         let newPeripheralData = setPeripheralData(major: major, minor:minor)
         pheripheralManager.startAdvertising(newPeripheralData as? [String : Any])
     }
@@ -79,8 +88,18 @@ func is_urgency_signal(minor:CLBeaconMinorValue)->Bool{
     return false
 }
 
+func is_first_time_random_code(major:CLBeaconMajorValue,random_code_list:Array<Int>)->Bool{
+    let random_code = Int(major)/10
+    if random_code_list.index(of: random_code) != nil {
+        print("これは初めて！！！")
+        return true
+    }
+    print("これは初めてじゃない")
+    return false
+}
+
 func under_certain_count(beacon: CLBeacon)->Bool{
-    if(Int(beacon.minor)%10000 < 4){
+    if(Int(beacon.minor)%10 < 3){
         return true
     }
     print("緊急用のadは終了")
