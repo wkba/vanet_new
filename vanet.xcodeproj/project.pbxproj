@@ -12,6 +12,9 @@
 		9A04850F1E07132400204199 /* configViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A04850E1E07132400204199 /* configViewController.swift */; };
 		9A0485111E071BA200204199 /* utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A0485101E071BA200204199 /* utility.swift */; };
 		9A26156E1E24446400F6904A /* CustomTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A26156D1E24446400F6904A /* CustomTextView.swift */; };
+		9A2615751E24484F00F6904A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A2615741E24484F00F6904A /* AVFoundation.framework */; };
+		9A26157B1E24567900F6904A /* warning.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 9A2615781E2455FF00F6904A /* warning.m4a */; };
+		9A26157D1E2456D900F6904A /* urgency.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 9A26157C1E2456CD00F6904A /* urgency.m4a */; };
 		9A814A3E1DF7E786009FA124 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A814A3D1DF7E786009FA124 /* AudioToolbox.framework */; };
 		9A8918561DF7C535003F63EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8918551DF7C535003F63EF /* AppDelegate.swift */; };
 		9A8918581DF7C535003F63EF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A8918571DF7C535003F63EF /* ViewController.swift */; };
@@ -48,6 +51,9 @@
 		9A04850E1E07132400204199 /* configViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = configViewController.swift; sourceTree = "<group>"; };
 		9A0485101E071BA200204199 /* utility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = utility.swift; sourceTree = "<group>"; };
 		9A26156D1E24446400F6904A /* CustomTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTextView.swift; sourceTree = "<group>"; };
+		9A2615741E24484F00F6904A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		9A2615781E2455FF00F6904A /* warning.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = warning.m4a; sourceTree = "<group>"; };
+		9A26157C1E2456CD00F6904A /* urgency.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = urgency.m4a; sourceTree = "<group>"; };
 		9A814A3D1DF7E786009FA124 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		9A8918521DF7C535003F63EF /* vanet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = vanet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A8918551DF7C535003F63EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -72,6 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A2615751E24484F00F6904A /* AVFoundation.framework in Frameworks */,
 				9A814A3E1DF7E786009FA124 /* AudioToolbox.framework in Frameworks */,
 				9A8918871DF7D53D003F63EF /* CoreLocation.framework in Frameworks */,
 			);
@@ -94,6 +101,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9A2615731E2447DF00F6904A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9A2615781E2455FF00F6904A /* warning.m4a */,
+				9A26157C1E2456CD00F6904A /* urgency.m4a */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		9A8918491DF7C535003F63EF = {
 			isa = PBXGroup;
 			children = (
@@ -118,6 +134,7 @@
 		9A8918541DF7C535003F63EF /* vanet */ = {
 			isa = PBXGroup;
 			children = (
+				9A2615731E2447DF00F6904A /* Resources */,
 				9A8918551DF7C535003F63EF /* AppDelegate.swift */,
 				9A0485101E071BA200204199 /* utility.swift */,
 				9A8918571DF7C535003F63EF /* ViewController.swift */,
@@ -156,6 +173,7 @@
 		9A8918851DF7D53D003F63EF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9A2615741E24484F00F6904A /* AVFoundation.framework */,
 				9A814A3D1DF7E786009FA124 /* AudioToolbox.framework */,
 				9A8918861DF7D53D003F63EF /* CoreLocation.framework */,
 			);
@@ -272,6 +290,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A26157D1E2456D900F6904A /* urgency.m4a in Resources */,
+				9A26157B1E24567900F6904A /* warning.m4a in Resources */,
 				9A8918601DF7C535003F63EF /* LaunchScreen.storyboard in Resources */,
 				9A89185D1DF7C535003F63EF /* Assets.xcassets in Resources */,
 				9A89185B1DF7C535003F63EF /* Main.storyboard in Resources */,

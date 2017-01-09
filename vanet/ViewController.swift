@@ -9,11 +9,10 @@
 import UIKit
 import CoreLocation
 import CoreBluetooth
-import AudioToolbox
 import CoreMotion
+import AVFoundation
 
-
-class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, AVAudioPlayerDelegate {
 
     // PheripheralManager.
     var myPheripheralManager:CBPeripheralManager!
@@ -31,6 +30,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
     @IBOutlet weak var state_button: UIButton!
     // Flag.
     var isAdvertising: Bool!
+    var player: AVAudioPlayer?
     
     @IBOutlet weak var accuracyLabel: UILabel!
     var myBeaconRegion:CLBeaconRegion!
@@ -349,6 +349,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                 if(beacon.accuracy<10.0){
                     // バイブレーション？アラート？
                     AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
+                    playWarningSound()
                 }
                 
                 //print("UUID: \(beaconUUID.UUIDString) minorID: \(minorID) majorID: \(majorID)");
@@ -415,6 +416,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                         if(is_first_time_random_code(major: CLBeaconMajorValue(beacon.major), random_code_list: random_code_list)){
                             let count = Int(beacon.minor) % 10
                             writeReceiveData(count: count, major: Int(beacon.major), minor:Int(beacon.minor),  accuracy: beacon.accuracy,time_logs: time_logs)
+                            playUrgencySound()
                             print("start urgency Ad with the code" + (Int(beacon.minor)%10000 + 1).description)
                             startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: Int(beacon.accuracy*debug_distortion), major: CLBeaconMajorValue(beacon.major), minor: CLBeaconMinorValue(beacon.minor) ,time_logs: time_logs)
                             self.random_code_list.append(Int(beacon.major)/10)
@@ -488,5 +490,54 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         cell.detailTextLabel!.text = beaconDetails[indexPath.row] as? String
         
         return cell
+    }
+    // 音楽再生が成功した時に呼ばれるメソッド
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        print("Music Finish")
+    }
+    
+    // デコード中にエラーが起きた時に呼ばれるメソッド
+    func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
+        print("Error")
+    }
+    func playUrgencySound() {
+        guard let url = Bundle.main.url(forResource: "urgency", withExtension: "m4a") else {
+            print("urgency url not found")
+            return
+        }
+        
+        do {
+            /// this codes for making this app ready to takeover the device audio
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            try AVAudioSession.sharedInstance().setActive(true)
+            
+            /// change fileTypeHint according to the type of your audio file (you can omit this)
+            player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileTypeMPEGLayer3)
+            
+            // no need for prepareToPlay because prepareToPlay is happen automatically when calling play()
+            player!.play()
+        } catch let error as NSError {
+            print("error: \(error.localizedDescription)")
+        }
+    }
+    func playWarningSound() {
+        guard let url = Bundle.main.url(forResource: "warning", withExtension: "m4a") else {
+            print("warning url not found")
+            return
+        }
+        
+        do {
+            /// this codes for making this app ready to takeover the device audio
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            try AVAudioSession.sharedInstance().setActive(true)
+            
+            /// change fileTypeHint according to the type of your audio file (you can omit this)
+            player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileTypeMPEGLayer3)
+            
+            // no need for prepareToPlay because prepareToPlay is happen automatically when calling play()
+            player!.play()
+        } catch let error as NSError {
+            print("error: \(error.localizedDescription)")
+        }
     }
 }
