@@ -20,3 +20,8 @@ func getVehicleName(major:NSNumber)->String{
         return "不明"
     }
 }
+func nowTime() -> String {
+    let format = DateFormatter()
+    format.dateFormat = "HH:mm:ss.SSS"
+    return format.string(from: NSDate() as Date)
+}

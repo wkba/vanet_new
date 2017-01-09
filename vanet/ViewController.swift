@@ -36,8 +36,10 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
     var myBeaconRegion:CLBeaconRegion!
     var beaconUuids: NSMutableArray!
     var beaconDetails: NSMutableArray!
+    //TODO:ここ変更が必要。デバック用にaccuracyを１００倍している
     let debug_distortion = 100.0
     @IBOutlet weak var beaconTableView: UITableView!
+    @IBOutlet weak var time_logs: UITextView!
     @IBOutlet weak var debug_logs: UITextView!
     @IBOutlet weak var debugView: UIView!
     @IBOutlet weak var modeSwitch: UISwitch!
@@ -113,7 +115,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         
         // セキュリティ認証のステータスを取得
         let status = CLLocationManager.authorizationStatus()
-        print("CLAuthorizedStatus: \(status.rawValue)");
+        //print("CLAuthorizedStatus: \(status.rawValue)");
         
         // まだ認証が得られていない場合は、認証ダイアログを表示
         if(status == .notDetermined) {
@@ -143,10 +145,10 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                 self.addDebugLogs(log:"急なスピード変化")
                 self.myPheripheralManager.stopAdvertising();
                 let newMajor = getMajorWithRandomCode()
-                print("getMajorWithRandomCode() is " + String(newMajor))
                 self.random_code_list.append(Int(newMajor)/10)
+                
                 let newMinor = getMinor(urgency_code: 1, accuracy: 0, count: 1)
-                startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: 0,major: CLBeaconMajorValue(newMajor), minor: CLBeaconMinorValue(newMinor))
+                startFirstAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: 0,major: CLBeaconMajorValue(newMajor), minor: CLBeaconMinorValue(newMinor),time_logs: self.time_logs)
             }
         })
         
@@ -171,7 +173,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
      Peripheralの準備ができたら呼び出される.
      */
     func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
-        print("peripheralManagerDidUpdateState")
+        //print("peripheralManagerDidUpdateState")
     }
     
     /*
@@ -198,7 +200,8 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
      */
     func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
         print("peripheralManagerDidStartAdvertising")
-        
+        print("------------------------------------")
+
         isAdvertising = true
         state_button.setTitle("STOP", for: .normal)
         state_button.backgroundColor = UIColor.red
@@ -249,26 +252,26 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
      */
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         
-        print("didChangeAuthorizationStatus");
+        //print("didChangeAuthorizationStatus");
         
         // 認証のステータスをログで表示
         switch (status) {
         case .notDetermined:
-            print("未認証の状態")
+            //print("未認証の状態")
             break
         case .restricted:
-            print("制限された状態")
+            //print("制限された状態")
             break
         case .denied:
-            print("許可しない")
+            //print("許可しない")
             break
         case .authorizedAlways:
-            print("常に許可")
+            //print("常に許可")
             // 許可がある場合はiBeacon検出を開始.
             startMyMonitoring()
             break
         case .authorizedWhenInUse:
-            print("このAppの使用中のみ許可")
+            //print("このAppの使用中のみ許可")
             // 許可がある場合はiBeacon検出を開始.
             startMyMonitoring()
             break
@@ -280,7 +283,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
      */
     func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
         
-        print("[iBeacon 手順2] didStartMonitoringForRegion");
+        //print("[iBeacon 手順2] didStartMonitoringForRegion");
         
         // [iBeacon 手順3] この時点でビーコンがすでにRegion内に入っている可能性があるので、その問い合わせを行う
         // [iBeacon 手順4] がDelegateで呼び出される.
@@ -292,12 +295,12 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
      */
     func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
         
-        print("[iBeacon 手順4] locationManager: didDetermineState \(state)")
+        //print("[iBeacon 手順4] locationManager: didDetermineState \(state)")
         
         switch (state) {
             
         case .inside: // リージョン内にiBeaconが存在いる
-            print("iBeaconが存在!");
+            //print("iBeaconが存在!");
             
             // [iBeacon 手順5] すでに入っている場合は、そのままiBeaconのRangingをスタートさせる。
             // [iBeacon 手順6] がDelegateで呼び出される.
@@ -306,12 +309,12 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
             break;
             
         case .outside:
-            print("iBeaconが圏外!")
+            //print("iBeaconが圏外!")
             // 外にいる、またはUknownの場合はdidEnterRegionが適切な範囲内に入った時に呼ばれるため処理なし。
             break;
             
         case .unknown:
-            print("iBeaconが圏外もしくは不明な状態!")
+            //print("iBeaconが圏外もしくは不明な状態!")
             // 外にいる、またはUknownの場合はdidEnterRegionが適切な範囲内に入った時に呼ばれるため処理なし。
             break;
             
@@ -342,6 +345,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                 let majorID = beacon.major;
                 let rssi = beacon.rssi;
                 let accuracy = beacon.accuracy;
+
                 if(beacon.accuracy<10.0){
                     // バイブレーション？アラート？
                     AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
@@ -354,23 +358,23 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                 switch (beacon.proximity) {
                     
                 case CLProximity.unknown :
-                    print("Proximity: Unknown");
+                    //print("Proximity: Unknown");
                     proximity = "Unknown"
                     break
                     
                 case CLProximity.far:
-                    print("Proximity: Far");
+                    //print("Proximity: Far");
                     proximity = "Far"
                     break
                     
                 case CLProximity.near:
-                    print("Proximity: Near");
+                    //print("Proximity: Near");
                     proximity = "Near"
                     
                     break
                     
                 case CLProximity.immediate:
-                    print("Proximity: Immediate");
+                    //print("Proximity: Immediate");
                     proximity = "Immediate"
                     break
                 }
@@ -381,7 +385,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                 myBeaconDetails += "Mi: \(minorID) "
                 myBeaconDetails += "Ac:".appendingFormat("%.2f", accuracy)
                 myBeaconDetails += "RSSI:\(rssi) "
-                print(myBeaconDetails)
+                //print(myBeaconDetails)
                 addDebugLogs(log: myBeaconDetails)
                 beaconDetails.add(myBeaconDetails)
                 let radius = getRadius(width : device_width, accuracy : accuracy)
@@ -393,17 +397,34 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
                     self.accuracyLabel.text = getVehicleName(major: majorID) + "が約".appendingFormat("%.2f", accuracy) + "m"
                 }
                 if(is_urgency_signal(minor: CLBeaconMinorValue(beacon.minor))){
-                    //startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: Int(beacon.accuracy), minor: CLBeaconMinorValue(beacon.minor))
-                    print("catch urgency signal")
+                    //print("catch urgency signal")
                     self.urgencyLabel.isHidden = false
-                    if(under_certain_count(beacon: beacon) && !is_first_time_random_code(major: CLBeaconMajorValue(beacon.major), random_code_list: random_code_list)){
-                        print("start urgency Ad with the code" + (Int(beacon.minor)%10000 + 1).description)
-                        startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: Int(beacon.accuracy*debug_distortion), major: CLBeaconMajorValue(beacon.major), minor: CLBeaconMinorValue(beacon.minor))
+//                    if(under_certain_count(beacon: beacon) && is_first_time_random_code(major: CLBeaconMajorValue(beacon.major), random_code_list: random_code_list)){
+//                        writeReceiveData(count: Int(beacon.minor)%10, major: Int(beacon.major), minor:Int(beacon.minor),  accuracy: beacon.accuracy,time_logs: time_logs)
+//                        print("start urgency Ad with the code" + (Int(beacon.minor)%10000 + 1).description)
+//                        startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: Int(beacon.accuracy*debug_distortion), major: CLBeaconMajorValue(beacon.major), minor: CLBeaconMinorValue(beacon.minor),time_logs: time_logs)
+//                        self.random_code_list.append(Int(beacon.major)/10)
+//
+//                    }else{
+//                        self.myPheripheralManager.stopAdvertising()
+//                        self.myPheripheralManager.startAdvertising(setPeripheralData(major:CLBeaconMajorValue(getMajor()), minor:0) as? [String : AnyObject])
+//                        print("start norma Ad")
+//                    }
+                    
+                    if(under_certain_count(beacon: beacon)){
+                        if(is_first_time_random_code(major: CLBeaconMajorValue(beacon.major), random_code_list: random_code_list)){
+                            let count = Int(beacon.minor) % 10
+                            writeReceiveData(count: count, major: Int(beacon.major), minor:Int(beacon.minor),  accuracy: beacon.accuracy,time_logs: time_logs)
+                            print("start urgency Ad with the code" + (Int(beacon.minor)%10000 + 1).description)
+                            startAdvertisingUrgencyPeripheralData(pheripheralManager: self.myPheripheralManager, accuracy: Int(beacon.accuracy*debug_distortion), major: CLBeaconMajorValue(beacon.major), minor: CLBeaconMinorValue(beacon.minor) ,time_logs: time_logs)
+                            self.random_code_list.append(Int(beacon.major)/10)
+                        }
                     }else{
                         self.myPheripheralManager.stopAdvertising()
                         self.myPheripheralManager.startAdvertising(setPeripheralData(major:CLBeaconMajorValue(getMajor()), minor:0) as? [String : AnyObject])
                         print("start norma Ad")
                     }
+                    
                 }else{
                     self.urgencyLabel.isHidden = true
                 }
@@ -419,7 +440,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
      [iBeacon イベント] iBeaconを検出した際に呼ばれる.
      */
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        print("didEnterRegion: iBeaconが圏内に発見されました。");
+        //print("didEnterRegion: iBeaconが圏内に発見されました。");
         
         // Rangingを始める (Ranginghあ1秒ごとに呼ばれるので、検出中のiBeaconがなくなったら止める)
         manager.startRangingBeacons(in: region as! CLBeaconRegion)
@@ -429,7 +450,7 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
      [iBeacon イベント] iBeaconを喪失した際に呼ばれる. 喪失後 30秒ぐらいあとに呼び出される.
      */
     func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
-        print("didExitRegion: iBeaconが圏外に喪失されました。");
+        //print("didExitRegion: iBeaconが圏外に喪失されました。");
         self.accuracyLabel.text = ""
         productionView.layer.addSublayer(getClearLayer(width : device_width, height : device_height))
         
@@ -441,8 +462,8 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
      Cellが選択された際に呼び出される
      */
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Num: \(indexPath.row)")
-        print("Value: \(beaconUuids[indexPath.row])")
+        //print("Num: \(indexPath.row)")
+        //print("Value: \(beaconUuids[indexPath.row])")
     }
     
     /*
@@ -468,5 +489,4 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate, CLLocationM
         
         return cell
     }
-    
 }
